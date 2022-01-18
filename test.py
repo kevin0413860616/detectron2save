@@ -28,14 +28,14 @@ cfg.merge_from_file("./configs/COCO-InstanceSegmentation/mask_rcnn_R_101_FPN_3x.
 
 #cfg.MODEL.WEIGHTS = os.path.join(cfg.OUTPUT_DIR, "model_final.pth")
 cfg.MODEL.WEIGHTS = os.path.join("./outputmodel/mask_rcnn_101_3000.pth")
-cfg.MODEL.ROI_HEADS.SCORE_THRESH_TEST = 0.7#测试的阈值
+cfg.MODEL.ROI_HEADS.SCORE_THRESH_TEST = 0.7#測試的閾值
 cfg.MODEL.ROI_HEADS.NUM_CLASSES=3
 cfg.DATASETS.TEST = ("newcoco/val", )
 predictor = DefaultPredictor(cfg)
-#随机选部分图片，可视化
+
 from detectron2.utils.visualizer import ColorMode
 dataset_dict = DatasetCatalog.get("peanutval")
-for d in random.sample(dataset_dict, 40):
+for d in random.sample(dataset_dict, 1):
    im = cv2.imread(d["file_name"])
    b,g,r = cv2.split(im)
    img_rgb = cv2.merge([r,g,b])
@@ -45,11 +45,11 @@ for d in random.sample(dataset_dict, 40):
    v = Visualizer(img_rgb[:, :, ::-1],
                    metadata=coco_metadata,
                    scale=0.8,
-                   instance_mode=ColorMode.SEGMENTATION # 去除非气球区域的像素颜色.
+                   instance_mode=ColorMode.SEGMENTATION 
     )
    v = v.draw_instance_predictions(outputs["instances"].to("cpu"))
    #v = v.draw_instance_predictions(outputs["instances"][outputs["instances"].pred_classes == 2].to("cpu"))
    plt.imshow(v.get_image()[:, :, ::-1])
-   plt.savefig("out/mask_rcnn_101/3000/all/"+"3000_"+"all"+d["file_name"][17:])
-  # plt.show()
+   #plt.savefig("out/mask_rcnn_101/3000/all/"+"3000_"+"all"+d["file_name"][17:])
+   plt.show()
 
